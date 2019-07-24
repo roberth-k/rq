@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	url2 "net/url"
+	"time"
 )
 
 func Begin() Request {
@@ -179,4 +180,16 @@ func (req Request) WithBodyAsBytes(data []byte) Request {
 func (req Request) WithBodyAsJSON(v interface{}) Request {
 	req.Marshaller = JSONMarshaller
 	return req.Marshal(v)
+}
+
+func (req Request) MapClient(f func(*http.Client) *http.Client) Request {
+	req.Client = f(req.Client)
+	return req
+}
+
+func (req Request) WithTimeout(timeout time.Duration) Request {
+	return req.MapClient(func(client *http.Client) *http.Client {
+		client.Timeout = timeout
+		return client
+	})
 }
