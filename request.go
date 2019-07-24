@@ -3,7 +3,6 @@ package rq
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"io"
 	"net/http"
 	url2 "net/url"
@@ -13,7 +12,7 @@ func Begin() Request {
 	return Request{
 		Method:     "GET",
 		Client:     http.DefaultClient,
-		Marshaller: func(Request, interface{}) (io.Reader, error) { return nil, nil },
+		Marshaller: JSONMarshaller,
 		Context:    context.TODO(),
 	}
 }
@@ -24,8 +23,6 @@ type Header struct {
 }
 
 type RequestMiddleware func(Request) Request
-
-type Marshaller func(Request, interface{}) (io.Reader, error)
 
 type Request struct {
 	URL                 url2.URL
@@ -158,17 +155,14 @@ func (req Request) WithBody(reader io.Reader) Request {
 	return req
 }
 
+func (req Request) WithBodyAsBytes(data []byte) Request {
+	req.Body = bytes.NewReader(data)
+	return req
+}
+
 func (req Request) WithBodyAsJSON(v interface{}) Request {
-	req.Marshaller = func(_ Request, v interface{}) (io.Reader, error) {
-		data, err := json.Marshal(v)
-		if err != nil {
-			return nil, err
-		}
-
-		return bytes.NewReader(data), nil
-	}
-
-	req = req.Marshal(v)
+	req.Marshaller = JSONMarshaller
 	req = req.SetHeader("Content-Type", "application/json; charset=utf-8")
+	req = req.Marshal(v)
 	return req
 }
