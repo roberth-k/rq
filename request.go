@@ -1,7 +1,10 @@
 package rq
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 	url2 "net/url"
 )
@@ -24,13 +27,14 @@ type Header struct {
 
 type RequestMiddleware func(Request) Request
 
-type Marshaller func(Request, interface{}) ([]byte, error)
+type Marshaller func(Request, interface{}) (io.Reader, error)
 
 type Request struct {
 	URL                 url2.URL
 	Method              string
 	Headers             []Header
 	Client              *http.Client
+	Body                io.Reader
 	RequestMiddlewares  []RequestMiddleware
 	ResponseMiddlewares []ResponseMiddleware
 	Marshaller          Marshaller
@@ -38,7 +42,7 @@ type Request struct {
 	err                 error
 }
 
-func (req Request) Do(ctx context.Context, body interface{}) (*Response, error) {
+func (req Request) Do(ctx context.Context) (*Response, error) {
 	if req.err != nil {
 		return nil, req.err
 	}
@@ -52,13 +56,29 @@ func (req Request) Do(ctx context.Context, body interface{}) (*Response, error) 
 	return DoRequest(req)
 }
 
-func (req Request) GET(ctx context.Context) (*Response, error) {
-	req.Method = "GET"
-	return req.Do(ctx, nil)
+func (req Request) DELETE(ctx context.Context) (*Response, error) {
+	req.Method = "DELETE"
+	return req.Do(ctx)
 }
 
-func (req Request) POST(ctx context.Context, v interface{}) (*Response, error) {
-	panic("not implemented")
+func (req Request) GET(ctx context.Context) (*Response, error) {
+	req.Method = "GET"
+	return req.Do(ctx)
+}
+
+func (req Request) PATCH(ctx context.Context) (*Response, error) {
+	req.Method = "PATCH"
+	return req.Do(ctx)
+}
+
+func (req Request) POST(ctx context.Context) (*Response, error) {
+	req.Method = "POST"
+	return req.Do(ctx)
+}
+
+func (req Request) PUT(ctx context.Context) (*Response, error) {
+	req.Method = "PUT"
+	return req.Do(ctx)
 }
 
 func (req Request) MapURL(f func(url url2.URL) url2.URL) Request {
@@ -105,6 +125,10 @@ func (req Request) MapHeaders(f func([]Header) []Header) Request {
 	return req
 }
 
+func (req Request) SetHeader(name string, values ...string) Request {
+	panic("not implemented")
+}
+
 func (req Request) WithRequestMiddlewares(middleware RequestMiddleware) Request {
 	req.RequestMiddlewares = append(req.RequestMiddlewares, middleware)
 	return req
@@ -117,5 +141,36 @@ func (req Request) WithResponseMiddleware(middleware ResponseMiddleware) Request
 
 func (req Request) WithMarshaller(marshaller Marshaller) Request {
 	req.Marshaller = marshaller
+	return req
+}
+
+func (req Request) Marshal(v interface{}) Request {
+	reader, err := req.Marshaller(req, v)
+	if err != nil {
+		req.err = err
+		return req
+	}
+
+	req.Body = reader
+	return req
+}
+
+func (req Request) WithBody(reader io.Reader) Request {
+	req.Body = reader
+	return req
+}
+
+func (req Request) WithBodyAsJSON(v interface{}) Request {
+	req.Marshaller = func(_ Request, v interface{}) (io.Reader, error) {
+		data, err := json.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+
+		return bytes.NewReader(data), nil
+	}
+
+	req = req.Marshal(v)
+	req = req.SetHeader("Content-Type", "application/json; charset=utf-8")
 	return req
 }
