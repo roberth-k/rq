@@ -9,14 +9,12 @@ import (
 	url2 "net/url"
 )
 
-const (
-	DefaultMethod = "GET"
-)
-
 func Begin() Request {
 	return Request{
-		Method: DefaultMethod,
-		Client: http.DefaultClient,
+		Method:     "GET",
+		Client:     http.DefaultClient,
+		Marshaller: func(Request, interface{}) (io.Reader, error) { return nil, nil },
+		Context:    context.TODO(),
 	}
 }
 
