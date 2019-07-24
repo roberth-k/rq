@@ -4,13 +4,14 @@ import (
 	"context"
 	"github.com/stretchr/testify/require"
 	"github.com/tetratom/rq"
+	"net/http"
 	"strings"
 	"testing"
 )
 
 var httpbin = rq.Begin().SetURL("https://httpbin.org")
 
-func TestSimpleMethods(t *testing.T) {
+func TestBasicHTTPMethods(t *testing.T) {
 	ctx := context.Background()
 
 	tests := []struct {
@@ -37,4 +38,27 @@ func TestSimpleMethods(t *testing.T) {
 			require.Equal(t, 200, rep.Status)
 		})
 	}
+}
+
+type HTTPBinResponse struct {
+	Data string `json:"data"`
+}
+
+func TestBasicMarshalling(t *testing.T) {
+	type Test struct {
+		Foo int
+	}
+
+	ctx := context.Background()
+	input := Test{Foo: 42}
+	req := httpbin.JoinURL("/anything").WithBodyAsJSON(input)
+	require.Equal(t, http.Header{"Content-Type": []string{"application/json; charset=utf-8"}}, req.HeaderMap())
+	rep, err := req.POST(ctx)
+	require.NoError(t, err)
+	require.Equal(t, 200, rep.Status)
+
+	var result HTTPBinResponse
+	err = rep.Unmarshal(&result)
+	require.NoError(t, err)
+	require.Equal(t, `{"Foo":42}`, result.Data)
 }

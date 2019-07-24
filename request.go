@@ -120,8 +120,25 @@ func (req Request) MapHeaders(f func([]Header) []Header) Request {
 	return req
 }
 
+func (req Request) HeaderMap() http.Header {
+	m := make(map[string][]string, len(req.Headers))
+	for _, header := range req.Headers {
+		m[header.Name] = append(m[header.Name], header.Value)
+	}
+	return m
+}
+
 func (req Request) SetHeader(name string, values ...string) Request {
-	panic("not implemented")
+	// todo: remove existing values
+
+	for _, value := range values {
+		req.Headers = append(req.Headers, Header{
+			Name:  name,
+			Value: value,
+		})
+	}
+
+	return req
 }
 
 func (req Request) WithRequestMiddlewares(middleware RequestMiddleware) Request {

@@ -6,7 +6,7 @@ import (
 
 func DoRequest(req Request) (*Response, error) {
 	// todo; optional request body
-	r, err := http.NewRequest(req.Method, req.URL.String(), nil)
+	r, err := http.NewRequest(req.Method, req.URL.String(), req.Body)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,9 @@
 package rq
 
 import (
+	"encoding/json"
 	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -20,5 +22,11 @@ func NewResponse(response *http.Response) *Response {
 }
 
 func (resp *Response) Unmarshal(v interface{}) error {
-	panic("not implemented")
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	return json.Unmarshal(data, v)
 }
