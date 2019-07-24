@@ -140,14 +140,13 @@ func (req Request) WithMarshaller(marshaller Marshaller) Request {
 }
 
 func (req Request) Marshal(v interface{}) Request {
-	reader, err := req.Marshaller(req, v)
+	req1, err := req.Marshaller(req, v)
 	if err != nil {
 		req.err = err
 		return req
 	}
 
-	req.Body = reader
-	return req
+	return req1
 }
 
 func (req Request) WithBody(reader io.Reader) Request {
@@ -162,7 +161,5 @@ func (req Request) WithBodyAsBytes(data []byte) Request {
 
 func (req Request) WithBodyAsJSON(v interface{}) Request {
 	req.Marshaller = JSONMarshaller
-	req = req.SetHeader("Content-Type", "application/json; charset=utf-8")
-	req = req.Marshal(v)
-	return req
+	return req.Marshal(v)
 }
