@@ -3,6 +3,7 @@ package rq
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	url2 "net/url"
@@ -114,6 +115,10 @@ func (req Request) JoinURL(segments ...string) Request {
 		}
 		return url
 	})
+}
+
+func (req Request) JoinFormatURL(segment string, args ...interface{}) Request {
+	return req.JoinURL(fmt.Sprintf(segment, args...))
 }
 
 func (req Request) MapHeaders(f func([]Header) []Header) Request {
