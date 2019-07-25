@@ -12,6 +12,7 @@ import (
 var httpbin = rq.Begin().SetURL("https://httpbin.org")
 
 func TestBasicHTTPMethods(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 
 	tests := []struct {
@@ -41,10 +42,13 @@ func TestBasicHTTPMethods(t *testing.T) {
 }
 
 type HTTPBinResponse struct {
-	Data string `json:"data"`
+	Data    string            `json:"data"`
+	Headers map[string]string `json:"headers"`
 }
 
 func TestBasicMarshalling(t *testing.T) {
+	t.Parallel()
+
 	type Test struct {
 		Foo int
 	}
@@ -61,4 +65,19 @@ func TestBasicMarshalling(t *testing.T) {
 	err = rep.Unmarshal(&result)
 	require.NoError(t, err)
 	require.Equal(t, `{"Foo":42}`, result.Data)
+}
+
+func TestRequestHeaders(t *testing.T) {
+	t.Parallel()
+
+	ctx := context.Background()
+	req := httpbin.JoinURL("/anything").SetHeader("Foo", "Bar").SetHeader("Bax", "Baz")
+	require.Equal(t, http.Header{"Foo": []string{"Bar"}, "Bax": []string{"Baz"}}, req.HeaderMap())
+	rep, err := req.GET(ctx)
+	require.NoError(t, err)
+	require.Equal(t, 200, rep.Status)
+	var result HTTPBinResponse
+	require.NoError(t, rep.Unmarshal(&result))
+	require.Equal(t, "Bar", result.Headers["Foo"])
+	require.Equal(t, "Baz", result.Headers["Bax"])
 }

@@ -11,6 +11,10 @@ func DoRequest(req Request) (*Response, error) {
 		return nil, err
 	}
 
+	for _, header := range req.Headers {
+		r.Header.Add(header.Name, header.Value)
+	}
+
 	r = r.WithContext(req.Context)
 
 	response, err := req.Client.Do(r)
