@@ -21,13 +21,20 @@ func NewResponse(response *http.Response) *Response {
 	return &rep
 }
 
+func (resp *Response) Close() error {
+	return resp.Body.Close()
+}
+
+func (resp *Response) ReadAll() ([]byte, error) {
+	defer resp.Close()
+	return ioutil.ReadAll(resp.Body)
+}
+
 func (resp *Response) Unmarshal(v interface{}) error {
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := resp.ReadAll()
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
-
 	return json.Unmarshal(data, v)
 }
 
