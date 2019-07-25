@@ -177,7 +177,7 @@ func (req Request) WithBodyAsBytes(data []byte) Request {
 	return req
 }
 
-func (req Request) WithBodyAsJSON(v interface{}) Request {
+func (req Request) WithBodyFromJSON(v interface{}) Request {
 	req.Marshaller = JSONMarshaller
 	return req.Marshal(v)
 }
