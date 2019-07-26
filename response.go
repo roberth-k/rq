@@ -5,18 +5,21 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type ResponseMiddleware func(Response, error) (Response, error)
 
 type Response struct {
-	Body   io.ReadCloser
-	Status int
+	Body    io.ReadCloser
+	Headers http.Header
+	Status  int
 }
 
 func NewResponse(response *http.Response) *Response {
 	var rep Response
 	rep.Body = response.Body
+	rep.Headers = response.Header
 	rep.Status = response.StatusCode
 	return &rep
 }
@@ -28,6 +31,10 @@ func (resp *Response) Close() error {
 func (resp *Response) ReadAll() ([]byte, error) {
 	defer resp.Close()
 	return ioutil.ReadAll(resp.Body)
+}
+
+func (resp *Response) IsBodyJSON() bool {
+	return strings.HasPrefix(resp.GetHeader("content-type"), "application/json")
 }
 
 func (resp *Response) Unmarshal(v interface{}) error {
@@ -56,4 +63,17 @@ func (resp *Response) Is4xx() bool {
 
 func (resp *Response) Is5xx() bool {
 	return resp.Status >= 500 && resp.Status < 600
+}
+
+func (resp *Response) GetHeader(name string) string {
+	return resp.Headers.Get(name)
+}
+
+func (resp *Response) HasHeader(name string) bool {
+	return resp.Headers.Get(name) != ""
+}
+
+func (resp *Response) LookupHeader(name string) (string, bool) {
+	value := resp.Headers.Get(name)
+	return value, value != ""
 }
