@@ -1,3 +1,4 @@
+// rq is a wrapper for go's http client.
 package rq
 
 import (
