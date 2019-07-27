@@ -1,7 +1,10 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@1.0.5
+
 jobs:
-  test:
+  go112:
     docker:
       - image: circleci/golang:1.12.7
         environment:
@@ -13,16 +16,18 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - 'go-mod-v1-{{ checksum "go.sum" }}'
+            - '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
       - run: go test -i ./...
       - save_cache:
-          key: 'go-mod-v1-{{ checksum "go.sum" }}'
+          key: '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
           paths:
             - "/go/pkg/mod"
-      - run: go test ./...
+      - run: go test ./... -coverprofile=/tmp/coverprofile -covermode=atomic
+      - codecov/upload:
+          file: /tmp/coverprofile
 
 workflows:
   version: 2
   default:
     jobs:
-      - test
+      - go112
