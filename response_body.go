@@ -13,6 +13,24 @@ func (resp Response) ReadAll() ([]byte, error) {
 	return ioutil.ReadAll(resp.response.Body)
 }
 
+func (resp Response) ReadString() (string, error) {
+	data, err := resp.ReadAll()
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
+}
+
+func (resp Response) ReadStringOrPanic() string {
+	data, err := resp.ReadString()
+	if err != nil {
+		panic(err)
+	}
+
+	return data
+}
+
 func (resp Response) UnmarshalJSON(v interface{}) error {
 	return UnmarshalJSON(resp, v)
 }
