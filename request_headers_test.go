@@ -2,6 +2,7 @@ package rq_test
 
 import (
 	"context"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tetratom/rq"
 	"net/http"
@@ -71,6 +72,19 @@ func TestRequest_GetHeader(t *testing.T) {
 	require.Equal(t, "a; c", req.GetHeader("TeSt1"))
 	require.Equal(t, "b", req.GetHeader("TEST2"))
 	require.Equal(t, "", req.GetHeader("Nothing"))
+}
+
+func TestRequest_HasHeader(t *testing.T) {
+	t.Parallel()
+
+	req := rq.Begin().
+		AddHeader("Test1", "a").
+		AddHeader("Test2", "b").
+		AddHeader("Test1", "c")
+
+	assert.True(t, req.HasHeader("Test1"))
+	assert.True(t, req.HasHeader("TEsT2"))
+	assert.False(t, req.HasHeader("Test3"))
 }
 
 func TestRequest_SetHeader(t *testing.T) {

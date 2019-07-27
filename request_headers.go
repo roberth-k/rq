@@ -40,6 +40,18 @@ func (req Request) GetHeader(name string) string {
 	return strings.Join(values, "; ")
 }
 
+func (req Request) HasHeader(name string) bool {
+	name = textproto.CanonicalMIMEHeaderKey(name)
+
+	for _, header := range req.Headers {
+		if header.Name == name {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (req Request) SetHeader(name string, value string, args ...interface{}) Request {
 	return req.RemoveHeader(name).AddHeader(name, value, args...)
 }
