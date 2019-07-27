@@ -2,32 +2,7 @@ package rq
 
 import (
 	"context"
-	"net/http"
 )
-
-func (req *Request) getClientOrDefault() *http.Client {
-	if req.Client == nil {
-		return http.DefaultClient
-	}
-
-	return req.Client
-}
-
-func (req *Request) getMarshallerOrDefault() Marshaller {
-	if req.Marshaller == nil {
-		return JSONMarshaller
-	}
-
-	return req.Marshaller
-}
-
-func (req *Request) getContextOrDefault() context.Context {
-	if req.Context == nil {
-		return context.TODO()
-	}
-
-	return req.Context
-}
 
 func (req Request) Map(mapper func(Request) Request) Request {
 	return mapper(req)

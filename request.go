@@ -28,9 +28,16 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 		r.Header.Add(header.Name, header.Value)
 	}
 
-	r = r.WithContext(req.getContextOrDefault())
+	if req.Context != nil {
+		r = r.WithContext(req.Context)
+	}
 
-	response, err := req.getClientOrDefault().Do(r)
+	client := req.Client
+	if client == nil {
+		client = http.DefaultClient
+	}
+
+	response, err := client.Do(r)
 	if err != nil {
 		return Response{}, err
 	}
