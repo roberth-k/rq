@@ -1,36 +1,49 @@
 package rq
 
 import (
+	"context"
+	"io"
 	"net/http"
+	"net/url"
 )
 
-func DoRequest(req Request) (*Response, error) {
-	r, err := http.NewRequest(req.Method, req.URL.String(), req.Body)
-	if err != nil {
-		return nil, err
+type RequestMiddleware func(Request) Request
+
+type Marshaller func(Request, interface{}) (Request, error)
+
+type Header struct {
+	Name  string
+	Value string
+}
+
+type Request struct {
+	URL                 url.URL
+	Method              string
+	Headers             []Header
+	Client              *http.Client
+	Body                io.Reader
+	RequestMiddlewares  []RequestMiddleware
+	ResponseMiddlewares []ResponseMiddleware
+	Marshaller          Marshaller
+	Unmarshaller        Unmarshaller
+	Context             context.Context
+	err                 error
+}
+
+type ResponseMiddleware func(Request, Response, error) (Response, error)
+
+type Unmarshaller func(response *Response, value interface{}) error
+
+type Response struct {
+	request Request
+	Body    io.ReadCloser
+	Headers http.Header
+	Status  int
+}
+
+func Begin() Request {
+	return Request{
+		Marshaller: JSONMarshaller,
+		Context:    context.TODO(),
 	}
-
-	for _, header := range req.Headers {
-		r.Header.Add(header.Name, header.Value)
-	}
-
-	r = r.WithContext(req.getContextOrDefault())
-
-	result, err := req.getClientOrDefault().Do(r)
-	if err != nil {
-		return nil, err
-	}
-
-	response := Response{
-		request: req,
-		Body:    result.Body,
-		Headers: result.Header,
-		Status:  result.StatusCode,
-	}
-
-	for _, middleware := range req.ResponseMiddlewares {
-		response, err = middleware(response, err)
-	}
-
-	return &response, err
 }

@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 )
 
-type Marshaller func(Request, interface{}) (Request, error)
-
 func NOOPMarshaller(req Request, v interface{}) (Request, error) {
 	return req, nil
 }
