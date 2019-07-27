@@ -4,6 +4,26 @@ orbs:
   codecov: codecov/codecov@1.0.5
 
 jobs:
+  go111:
+    docker:
+      - image: circleci/golang:1.11.12
+        environment:
+          HTTPBIN_URL: http://httpbin.org
+      - image: kennethreitz/httpbin
+        name: httpbin.org
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
+      - run: go mod download
+      - save_cache:
+          key: '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
+          paths:
+            - "/go/pkg/mod"
+      - run: go test ./...
+
   go112:
     docker:
       - image: circleci/golang:1.12.7
@@ -17,7 +37,7 @@ jobs:
       - restore_cache:
           keys:
             - '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
-      - run: go test -i ./...
+      - run: go mod download
       - save_cache:
           key: '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
           paths:
@@ -31,3 +51,4 @@ workflows:
   default:
     jobs:
       - go112
+      - go111
