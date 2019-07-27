@@ -38,18 +38,8 @@ func (req *Request) getContextOrDefault() context.Context {
 	return req.Context
 }
 
-func (req Request) WithRequestMiddlewares(middleware RequestMiddleware) Request {
-	req.RequestMiddlewares = append(req.RequestMiddlewares, middleware)
-	return req
-}
-
 func (req Request) WithMarshaller(marshaller Marshaller) Request {
 	req.Marshaller = marshaller
-	return req
-}
-
-func (req Request) WithResponseMiddleware(middleware ResponseMiddleware) Request {
-	req.ResponseMiddlewares = append(req.ResponseMiddlewares, middleware)
 	return req
 }
 
