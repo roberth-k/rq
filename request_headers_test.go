@@ -54,7 +54,7 @@ func TestRequest_AddHeader(t *testing.T) {
 	req = req.AddHeader("Test1", "b")
 	require.Equal(t, []rq.Header{{"Test1", "a"}, {"Test1", "b"}}, req.Headers)
 
-	req = req.AddHeader("Test2", "c")
+	req = req.AddHeader("Test2", "%s", "c")
 	require.Equal(t, []rq.Header{{"Test1", "a"}, {"Test1", "b"}, {"Test2", "c"}}, req.Headers)
 }
 
@@ -64,7 +64,7 @@ func TestRequest_SetHeader(t *testing.T) {
 	req := rq.Begin().
 		AddHeader("Test1", "a").
 		AddHeader("Test2", "b").
-		AddHeader("Test1", "c")
+		AddHeader("Test1", "%s", "c")
 	require.Equal(t, []rq.Header{{"Test1", "a"}, {"Test2", "b"}, {"Test1", "c"}}, req.Headers)
 
 	req = req.SetHeader("Test1", "d")

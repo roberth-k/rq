@@ -1,6 +1,7 @@
 package rq
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -12,13 +13,17 @@ func (req Request) HeaderMap() http.Header {
 	return m
 }
 
-func (req Request) AddHeader(name string, value string) Request {
+func (req Request) AddHeader(name string, value string, args ...interface{}) Request {
+	if len(args) > 0 {
+		value = fmt.Sprintf(value, args...)
+	}
+
 	req.Headers = append(req.Headers, Header{Name: name, Value: value})
 	return req
 }
 
-func (req Request) SetHeader(name string, value string) Request {
-	return req.RemoveHeader(name).AddHeader(name, value)
+func (req Request) SetHeader(name string, value string, args ...interface{}) Request {
+	return req.RemoveHeader(name).AddHeader(name, value, args...)
 }
 
 func (req Request) RemoveHeader(name string) Request {
