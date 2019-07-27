@@ -15,6 +15,7 @@ func TestBasicHTTPMethods(t *testing.T) {
 		method   string
 		function func(rq.Request, context.Context) (rq.Response, error)
 	}{
+		{"", rq.Request.GET},
 		{"DELETE", rq.Request.DELETE},
 		{"GET", rq.Request.GET},
 		{"PATCH", rq.Request.PATCH},
