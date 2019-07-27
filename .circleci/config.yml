@@ -4,17 +4,22 @@ jobs:
   test:
     docker:
       - image: circleci/golang:1.12.7
+        environment:
+          HTTPBIN_URL: http://httpbin.org
+      - image: kennethreitz/httpbin
+        name: httpbin.org
 
     steps:
       - checkout
       - restore_cache:
           keys:
             - 'go-mod-v1-{{ checksum "go.sum" }}'
-      - run: go test ./...
+      - run: go test -i ./...
       - save_cache:
           key: 'go-mod-v1-{{ checksum "go.sum" }}'
           paths:
             - "/go/pkg/mod"
+      - run: go test ./...
 
 workflows:
   version: 2
