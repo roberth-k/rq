@@ -14,6 +14,9 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 
 	for _, middleware := range req.RequestMiddlewares {
 		req = middleware(req)
+		if req.err != nil {
+			return Response{}, req.err
+		}
 	}
 
 	r, err := http.NewRequest(req.Method, req.URL.String(), req.Body)

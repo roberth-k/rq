@@ -9,7 +9,13 @@ import (
 
 type RequestMiddleware func(Request) Request
 
-type Marshaller func(Request, interface{}) (Request, error)
+// Marshaller is a function for marshalling the given value into the given
+// request. The marshaller is expected to set any additional relevant properties,
+// such as the Content-Type header.
+//
+// If marshalling fails, the error of the resultant request should be set using
+// SetError().
+type Marshaller func(Request, interface{}) Request
 
 type Header struct {
 	Name  string
@@ -39,6 +45,6 @@ type Response struct {
 	Unmarshaller Unmarshaller
 }
 
-func Begin() Request {
-	return Request{}
+func Begin(segments ...string) Request {
+	return Request{}.JoinURL(segments...)
 }

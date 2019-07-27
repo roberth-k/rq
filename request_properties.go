@@ -2,7 +2,6 @@ package rq
 
 import (
 	"context"
-	"io"
 	"net/http"
 )
 
@@ -30,9 +29,8 @@ func (req *Request) getContextOrDefault() context.Context {
 	return req.Context
 }
 
-func (req Request) WithMarshaller(marshaller Marshaller) Request {
-	req.Marshaller = marshaller
-	return req
+func (req Request) Map(mapper func(Request) Request) Request {
+	return mapper(req)
 }
 
 func (req Request) WithUnmarshaller(unmarshaller Unmarshaller) Request {
@@ -40,11 +38,24 @@ func (req Request) WithUnmarshaller(unmarshaller Unmarshaller) Request {
 	return req
 }
 
-func (req Request) WithBody(reader io.Reader) Request {
-	req.Body = reader
+func (req Request) URLToString() string {
+	return req.URL.String()
+}
+
+func (req Request) GetError() error {
+	return req.err
+}
+
+func (req Request) HasError() bool {
+	return req.err != nil
+}
+
+func (req Request) SetError(err error) Request {
+	req.err = err
 	return req
 }
 
-func (req Request) URLToString() string {
-	return req.URL.String()
+func (req Request) SetContext(c context.Context) Request {
+	req.Context = c
+	return req
 }

@@ -1,21 +1,20 @@
 package rq
 
 import (
-	"bytes"
 	"encoding/json"
 )
 
-func NOOPMarshaller(req Request, v interface{}) (Request, error) {
-	return req, nil
+func NOOPMarshaller(req Request, _ interface{}) Request {
+	return req
 }
 
-func JSONMarshaller(req Request, v interface{}) (Request, error) {
-	data, err := json.Marshal(v)
+func JSONMarshaller(req Request, value interface{}) Request {
+	data, err := json.Marshal(value)
 	if err != nil {
-		return req, err
+		return req.SetError(err)
 	}
 
-	req.Body = bytes.NewReader(data)
-	req = req.SetHeader("Content-Type", "application/json; charset=utf-8")
-	return req, nil
+	return req.
+		SetBodyBytes(data).
+		SetHeader("Content-Type", "application/json; charset=utf-8")
 }
