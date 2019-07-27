@@ -62,3 +62,7 @@ func (req Request) WithBody(reader io.Reader) Request {
 	req.Body = reader
 	return req
 }
+
+func (req Request) URLToString() string {
+	return req.URL.String()
+}

@@ -16,7 +16,7 @@ func TestBasicMarshalling(t *testing.T) {
 
 	ctx := context.Background()
 	input := Test{Foo: 42}
-	req := httpbin.JoinURL("/anything").WithBodyFromJSON(input)
+	req := HTTPBin().JoinURL("/anything").WithBodyFromJSON(input)
 	require.Equal(t, http.Header{"Content-Type": []string{"application/json; charset=utf-8"}}, req.HeaderMap())
 	rep, err := req.POST(ctx)
 	require.NoError(t, err)

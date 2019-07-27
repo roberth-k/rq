@@ -10,17 +10,16 @@ import (
 
 func TestBasicHTTPMethods(t *testing.T) {
 	t.Parallel()
-	ctx := context.Background()
 
 	tests := []struct {
-		method string
-		f      func(request rq.Request) (*rq.Response, error)
+		method   string
+		function func(rq.Request, context.Context) (*rq.Response, error)
 	}{
-		{"DELETE", func(req rq.Request) (*rq.Response, error) { return req.DELETE(ctx) }},
-		{"GET", func(req rq.Request) (*rq.Response, error) { return req.GET(ctx) }},
-		{"PATCH", func(req rq.Request) (*rq.Response, error) { return req.PATCH(ctx) }},
-		{"POST", func(req rq.Request) (*rq.Response, error) { return req.POST(ctx) }},
-		{"PUT", func(req rq.Request) (*rq.Response, error) { return req.PUT(ctx) }},
+		{"DELETE", rq.Request.DELETE},
+		{"GET", rq.Request.GET},
+		{"PATCH", rq.Request.PATCH},
+		{"POST", rq.Request.POST},
+		{"PUT", rq.Request.PUT},
 	}
 
 	for _, test := range tests {
@@ -29,9 +28,9 @@ func TestBasicHTTPMethods(t *testing.T) {
 			t.Parallel()
 
 			lcmethod := strings.ToLower(test.method)
-			req := httpbin.JoinURL(lcmethod)
-			require.Equal(t, "https://httpbin.org/"+lcmethod, req.URL.String())
-			rep, err := test.f(req)
+			req := HTTPBin().JoinURL(lcmethod)
+			require.Equal(t, "http://httpbin.org/"+lcmethod, req.URL.String())
+			rep, err := test.function(req, context.TODO())
 			require.NoError(t, err)
 			require.Equal(t, 200, rep.Status)
 		})

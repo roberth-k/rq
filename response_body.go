@@ -18,5 +18,5 @@ func (resp *Response) UnmarshalJSON(v interface{}) error {
 }
 
 func (resp *Response) Unmarshal(v interface{}) error {
-	return resp.request.Unmarshaller(resp, v)
+	return resp.request.getUnmarshallerOrDefault()(resp, v)
 }

@@ -11,7 +11,7 @@ func TestRequestHeaders(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	req := httpbin.JoinURL("/anything").SetHeader("Foo", "Bar").SetHeader("Bax", "Baz")
+	req := HTTPBin().JoinURL("/anything").SetHeader("Foo", "Bar").SetHeader("Bax", "Baz")
 	require.Equal(t, http.Header{"Foo": []string{"Bar"}, "Bax": []string{"Baz"}}, req.HeaderMap())
 	rep, err := req.GET(ctx)
 	require.NoError(t, err)
