@@ -5,12 +5,12 @@ import (
 )
 
 func (resp *Response) Close() error {
-	return resp.Body.Close()
+	return resp.response.Body.Close()
 }
 
 func (resp *Response) ReadAll() ([]byte, error) {
 	defer resp.Close()
-	return ioutil.ReadAll(resp.Body)
+	return ioutil.ReadAll(resp.response.Body)
 }
 
 func (resp *Response) UnmarshalJSON(v interface{}) error {
@@ -18,5 +18,5 @@ func (resp *Response) UnmarshalJSON(v interface{}) error {
 }
 
 func (resp *Response) Unmarshal(v interface{}) error {
-	return resp.request.getUnmarshallerOrDefault()(resp, v)
+	return resp.getUnmarshallerOrDefault()(resp, v)
 }

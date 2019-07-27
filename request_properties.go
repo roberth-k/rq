@@ -22,14 +22,6 @@ func (req *Request) getMarshallerOrDefault() Marshaller {
 	return req.Marshaller
 }
 
-func (req *Request) getUnmarshallerOrDefault() Unmarshaller {
-	if req.Unmarshaller == nil {
-		return UnmarshalJSON
-	}
-
-	return req.Unmarshaller
-}
-
 func (req *Request) getContextOrDefault() context.Context {
 	if req.Context == nil {
 		return context.TODO()

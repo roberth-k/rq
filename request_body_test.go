@@ -20,7 +20,7 @@ func TestBasicMarshalling(t *testing.T) {
 	require.Equal(t, http.Header{"Content-Type": []string{"application/json; charset=utf-8"}}, req.HeaderMap())
 	rep, err := req.POST(ctx)
 	require.NoError(t, err)
-	require.Equal(t, 200, rep.Status)
+	require.Equal(t, 200, rep.Status())
 
 	var result HTTPBinResponse
 	err = rep.Unmarshal(&result)

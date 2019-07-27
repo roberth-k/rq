@@ -15,7 +15,7 @@ func TestRequestHeaders(t *testing.T) {
 	require.Equal(t, http.Header{"Foo": []string{"Bar"}, "Bax": []string{"Baz"}}, req.HeaderMap())
 	rep, err := req.GET(ctx)
 	require.NoError(t, err)
-	require.Equal(t, 200, rep.Status)
+	require.Equal(t, 200, rep.Status())
 	var result HTTPBinResponse
 	require.NoError(t, rep.Unmarshal(&result))
 	require.Equal(t, "Bar", result.Headers["Foo"])

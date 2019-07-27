@@ -27,21 +27,19 @@ func (req Request) Do(ctx context.Context) (*Response, error) {
 
 	r = r.WithContext(req.getContextOrDefault())
 
-	result, err := req.getClientOrDefault().Do(r)
+	response, err := req.getClientOrDefault().Do(r)
 	if err != nil {
 		return nil, err
 	}
 
-	response := Response{
-		request: req,
-		Body:    result.Body,
-		Headers: result.Header,
-		Status:  result.StatusCode,
+	result := Response{
+		response:     response,
+		Unmarshaller: req.Unmarshaller,
 	}
 
 	for _, middleware := range req.ResponseMiddlewares {
-		response, err = middleware(req, response, err)
+		result, err = middleware(req, result, err)
 	}
 
-	return &response, err
+	return &result, err
 }

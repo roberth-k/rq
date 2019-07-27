@@ -32,7 +32,7 @@ func TestBasicHTTPMethods(t *testing.T) {
 			require.Equal(t, "http://httpbin.org/"+lcmethod, req.URL.String())
 			rep, err := test.function(req, context.TODO())
 			require.NoError(t, err)
-			require.Equal(t, 200, rep.Status)
+			require.Equal(t, 200, rep.Status())
 		})
 	}
 }
