@@ -6,8 +6,11 @@ import (
 )
 
 type HTTPBinResponse struct {
-	Data    string            `json:"data"`
-	Headers map[string]string `json:"headers"`
+	Authenticated bool              `json:"authenticated"`
+	Data          string            `json:"data"`
+	Headers       map[string]string `json:"headers"`
+	Token         string            `json:"token"`
+	User          string            `json:"user"`
 }
 
 func HTTPBin() rq.Request {

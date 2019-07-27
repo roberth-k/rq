@@ -121,12 +121,24 @@ func TestRequest_RemoveHeader(t *testing.T) {
 
 func TestRequest_SetBasicAuth(t *testing.T) {
 	t.Parallel()
-	req := rq.Begin().SetBasicAuth("johndoe", "password123")
+	req := HTTPBin().SetBasicAuth("johndoe", "password123")
 	require.Equal(t, "Basic am9obmRvZTpwYXNzd29yZDEyMw==", req.GetHeader("authorization"))
+
+	rep, _ := req.JoinURL("basic-auth/johndoe/password123").GET(context.TODO())
+	require.Equal(t, 200, rep.Status())
+	var response HTTPBinResponse
+	require.NoError(t, rep.UnmarshalJSON(&response))
+	require.Equal(t, "johndoe", response.User)
 }
 
 func TestRequest_SetBearerToken(t *testing.T) {
 	t.Parallel()
-	req := rq.Begin().SetBearerToken("mytoken")
+	req := HTTPBin().SetBearerToken("mytoken")
 	require.Equal(t, "Bearer mytoken", req.GetHeader("authorization"))
+
+	rep, _ := req.JoinURL("bearer").GET(context.TODO())
+	require.Equal(t, 200, rep.Status())
+	var response HTTPBinResponse
+	require.NoError(t, rep.UnmarshalJSON(&response))
+	require.Equal(t, "mytoken", response.Token)
 }
