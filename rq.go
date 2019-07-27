@@ -42,8 +42,5 @@ type Response struct {
 }
 
 func Begin() Request {
-	return Request{
-		Marshaller: JSONMarshaller,
-		Context:    context.TODO(),
-	}
+	return Request{}
 }
