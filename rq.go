@@ -1,7 +1,6 @@
 package rq
 
 import (
-	"context"
 	"io"
 	"net/http"
 	"net/url"
@@ -32,7 +31,6 @@ type Request struct {
 	ResponseMiddlewares []ResponseMiddleware
 	Marshaller          Marshaller
 	Unmarshaller        Unmarshaller
-	Context             context.Context
 	err                 error
 }
 

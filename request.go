@@ -10,8 +10,6 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 		return Response{}, req.err
 	}
 
-	req.Context = ctx
-
 	for _, middleware := range req.RequestMiddlewares {
 		req = middleware(req)
 		if req.err != nil {
@@ -28,8 +26,8 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 		r.Header.Add(header.Name, header.Value)
 	}
 
-	if req.Context != nil {
-		r = r.WithContext(req.Context)
+	if ctx != nil {
+		r = r.WithContext(ctx)
 	}
 
 	client := req.Client
