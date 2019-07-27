@@ -1,8 +1,11 @@
 package rq
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net/http"
+	"net/textproto"
+	"strings"
 )
 
 func (req Request) HeaderMap() http.Header {
@@ -14,6 +17,8 @@ func (req Request) HeaderMap() http.Header {
 }
 
 func (req Request) AddHeader(name string, value string, args ...interface{}) Request {
+	name = textproto.CanonicalMIMEHeaderKey(name)
+
 	if len(args) > 0 {
 		value = fmt.Sprintf(value, args...)
 	}
@@ -22,11 +27,25 @@ func (req Request) AddHeader(name string, value string, args ...interface{}) Req
 	return req
 }
 
+func (req Request) GetHeader(name string) string {
+	name = textproto.CanonicalMIMEHeaderKey(name)
+	values := make([]string, 0, 1)
+
+	for _, header := range req.Headers {
+		if header.Name == name {
+			values = append(values, header.Value)
+		}
+	}
+
+	return strings.Join(values, "; ")
+}
+
 func (req Request) SetHeader(name string, value string, args ...interface{}) Request {
 	return req.RemoveHeader(name).AddHeader(name, value, args...)
 }
 
 func (req Request) RemoveHeader(name string) Request {
+	name = textproto.CanonicalMIMEHeaderKey(name)
 	newHeaders := make([]Header, 0, len(req.Headers))
 
 	for _, header := range req.Headers {
@@ -44,4 +63,14 @@ func (req Request) RemoveHeader(name string) Request {
 
 	req.Headers = newHeaders
 	return req
+}
+
+func (req Request) SetBasicAuth(username, password string) Request {
+	concatenated := username + ":" + password
+	credentials := base64.StdEncoding.EncodeToString([]byte(concatenated))
+	return req.SetHeader("Authorization", "Basic %s", credentials)
+}
+
+func (req Request) SetBearerToken(token string) Request {
+	return req.SetHeader("Authorization", "Bearer %s", token)
 }
