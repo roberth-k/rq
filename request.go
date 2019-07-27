@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-func (req Request) Do(ctx context.Context) (*Response, error) {
+func (req Request) Do(ctx context.Context) (Response, error) {
 	if req.err != nil {
-		return nil, req.err
+		return Response{}, req.err
 	}
 
 	req.Context = ctx
@@ -18,7 +18,7 @@ func (req Request) Do(ctx context.Context) (*Response, error) {
 
 	r, err := http.NewRequest(req.Method, req.URL.String(), req.Body)
 	if err != nil {
-		return nil, err
+		return Response{}, err
 	}
 
 	for _, header := range req.Headers {
@@ -29,7 +29,7 @@ func (req Request) Do(ctx context.Context) (*Response, error) {
 
 	response, err := req.getClientOrDefault().Do(r)
 	if err != nil {
-		return nil, err
+		return Response{}, err
 	}
 
 	result := Response{
@@ -41,5 +41,5 @@ func (req Request) Do(ctx context.Context) (*Response, error) {
 		result, err = middleware(req, result, err)
 	}
 
-	return &result, err
+	return result, err
 }

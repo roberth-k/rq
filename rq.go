@@ -32,7 +32,7 @@ type Request struct {
 
 type ResponseMiddleware func(Request, Response, error) (Response, error)
 
-type Unmarshaller func(*Response, interface{}) error
+type Unmarshaller func(Response, interface{}) error
 
 type Response struct {
 	response     *http.Response
