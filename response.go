@@ -1,27 +1,18 @@
 package rq
 
 import (
-	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strings"
 )
 
-type ResponseMiddleware func(Response, error) (Response, error)
+type ResponseMiddleware func(Request, Response, error) (Response, error)
 
 type Response struct {
+	request Request
 	Body    io.ReadCloser
 	Headers http.Header
 	Status  int
-}
-
-func NewResponse(response *http.Response) *Response {
-	var rep Response
-	rep.Body = response.Body
-	rep.Headers = response.Header
-	rep.Status = response.StatusCode
-	return &rep
 }
 
 func (resp *Response) Close() error {
@@ -33,16 +24,12 @@ func (resp *Response) ReadAll() ([]byte, error) {
 	return ioutil.ReadAll(resp.Body)
 }
 
-func (resp *Response) IsBodyJSON() bool {
-	return strings.HasPrefix(resp.GetHeader("content-type"), "application/json")
+func (resp *Response) UnmarshalJSON(v interface{}) error {
+	return UnmarshalJSON(resp, v)
 }
 
 func (resp *Response) Unmarshal(v interface{}) error {
-	data, err := resp.ReadAll()
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(data, v)
+	return resp.request.Unmarshaller(resp, v)
 }
 
 func (resp *Response) Is1xx() bool {

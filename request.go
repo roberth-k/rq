@@ -12,8 +12,6 @@ import (
 
 func Begin() Request {
 	return Request{
-		Method:     "GET",
-		Client:     http.DefaultClient,
 		Marshaller: JSONMarshaller,
 		Context:    context.TODO(),
 	}
@@ -35,8 +33,41 @@ type Request struct {
 	RequestMiddlewares  []RequestMiddleware
 	ResponseMiddlewares []ResponseMiddleware
 	Marshaller          Marshaller
+	Unmarshaller        Unmarshaller
 	Context             context.Context
 	err                 error
+}
+
+func (req *Request) getClientOrDefault() *http.Client {
+	if req.Client == nil {
+		return http.DefaultClient
+	}
+
+	return req.Client
+}
+
+func (req *Request) getMarshallerOrDefault() Marshaller {
+	if req.Marshaller == nil {
+		return JSONMarshaller
+	}
+
+	return req.Marshaller
+}
+
+func (req *Request) getUnmarshallerOrDefault() Unmarshaller {
+	if req.Unmarshaller == nil {
+		return UnmarshalJSON
+	}
+
+	return req.Unmarshaller
+}
+
+func (req *Request) getContextOrDefault() context.Context {
+	if req.Context == nil {
+		return context.TODO()
+	}
+
+	return req.Context
 }
 
 func (req Request) Do(ctx context.Context) (*Response, error) {
@@ -163,13 +194,18 @@ func (req Request) WithMarshaller(marshaller Marshaller) Request {
 }
 
 func (req Request) Marshal(v interface{}) Request {
-	req1, err := req.Marshaller(req, v)
+	req1, err := req.getMarshallerOrDefault()(req, v)
 	if err != nil {
 		req.err = err
 		return req
 	}
 
 	return req1
+}
+
+func (req Request) WithUnmarshaller(unmarshaller Unmarshaller) Request {
+	req.Unmarshaller = unmarshaller
+	return req
 }
 
 func (req Request) WithBody(reader io.Reader) Request {

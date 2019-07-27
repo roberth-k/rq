@@ -5,7 +5,6 @@ import (
 )
 
 func DoRequest(req Request) (*Response, error) {
-	// todo; optional request body
 	r, err := http.NewRequest(req.Method, req.URL.String(), req.Body)
 	if err != nil {
 		return nil, err
@@ -15,12 +14,23 @@ func DoRequest(req Request) (*Response, error) {
 		r.Header.Add(header.Name, header.Value)
 	}
 
-	r = r.WithContext(req.Context)
+	r = r.WithContext(req.getContextOrDefault())
 
-	response, err := req.Client.Do(r)
+	result, err := req.getClientOrDefault().Do(r)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewResponse(response), nil
+	response := Response{
+		request: req,
+		Body:    result.Body,
+		Headers: result.Header,
+		Status:  result.StatusCode,
+	}
+
+	for _, middleware := range req.ResponseMiddlewares {
+		response, err = middleware(response, err)
+	}
+
+	return &response, err
 }
