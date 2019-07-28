@@ -2,6 +2,7 @@
 package rq
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/url"
@@ -33,6 +34,7 @@ type Request struct {
 	Marshaller          Marshaller
 	Unmarshaller        Unmarshaller
 	err                 error
+	ctx                 context.Context
 }
 
 type ResponseMiddleware func(Request, Response, error) (Response, error)

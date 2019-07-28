@@ -1,5 +1,9 @@
 package rq
 
+import (
+	"context"
+)
+
 func (req Request) Map(mapper func(Request) Request) Request {
 	return mapper(req)
 }
@@ -24,4 +28,12 @@ func (req Request) HasError() bool {
 func (req Request) SetError(err error) Request {
 	req.err = err
 	return req
+}
+
+func (req Request) GetContext() context.Context {
+	if req.ctx == nil {
+		return context.TODO()
+	}
+
+	return req.ctx
 }
