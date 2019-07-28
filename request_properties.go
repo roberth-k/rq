@@ -13,10 +13,6 @@ func (req Request) WithUnmarshaller(unmarshaller Unmarshaller) Request {
 	return req
 }
 
-func (req Request) URLToString() string {
-	return req.URL.String()
-}
-
 func (req Request) GetError() error {
 	return req.err
 }
