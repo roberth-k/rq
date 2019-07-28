@@ -70,7 +70,7 @@ func TestRequest_Marshal(t *testing.T) {
 		return req.SetHeader("Test", "done")
 	}
 
-	req := rq.Begin()
+	req := rq.Request{}
 	require.False(t, req.HasHeader("Test"))
 
 	req = req.SetMarshaller(m)
@@ -89,7 +89,7 @@ func TestRequest_MarshalJSON(t *testing.T) {
 	t.Parallel()
 
 	actual := map[string]string{"x": "y"}
-	req := rq.Begin().MarshalJSON(actual)
+	req := rq.Request{}.MarshalJSON(actual)
 	require.NotNil(t, req.Body)
 	data, err := ioutil.ReadAll(req.Body)
 	require.NoError(t, err)

@@ -52,7 +52,8 @@ func NewResponseVerifyingMiddleware() rq.ResponseMiddleware {
 }
 
 func Example_signingMiddleware() {
-	api := HTTPBin().
+	api := rq.
+		Begin("http://httpbin.org").
 		JoinURL("anything").
 		AddRequestMiddlewares(NewRequestSigningMiddleware("much secure"))
 
@@ -67,7 +68,7 @@ func Example_signingMiddleware() {
 		AddResponseMiddlewares(NewResponseVerifyingMiddleware()).
 		GET(context.TODO())
 	fmt.Println("second request")
-	fmt.Println("error:", err)
+	fmt.Println("error:", err) // error: no response signature
 
 	// Output:
 	// first request

@@ -62,7 +62,8 @@ func TestRequest_AddHeader(t *testing.T) {
 func TestRequest_GetHeader(t *testing.T) {
 	t.Parallel()
 
-	req := rq.Begin().
+	req := rq.
+		Request{}.
 		AddHeader("Test1", "a").
 		AddHeader("Test2", "b").
 		AddHeader("Test1", "c")
@@ -77,7 +78,8 @@ func TestRequest_GetHeader(t *testing.T) {
 func TestRequest_HasHeader(t *testing.T) {
 	t.Parallel()
 
-	req := rq.Begin().
+	req := rq.
+		Request{}.
 		AddHeader("Test1", "a").
 		AddHeader("Test2", "b").
 		AddHeader("Test1", "c")
@@ -90,7 +92,8 @@ func TestRequest_HasHeader(t *testing.T) {
 func TestRequest_SetHeader(t *testing.T) {
 	t.Parallel()
 
-	req := rq.Begin().
+	req := rq.
+		Request{}.
 		AddHeader("Test1", "a").
 		AddHeader("Test2", "b").
 		AddHeader("TEST1", "%s", "c")
@@ -103,7 +106,8 @@ func TestRequest_SetHeader(t *testing.T) {
 func TestRequest_RemoveHeader(t *testing.T) {
 	t.Parallel()
 
-	req := rq.Begin().
+	req := rq.
+		Request{}.
 		AddHeader("Test1", "a").
 		AddHeader("Test2", "b").
 		AddHeader("Test1", "c")

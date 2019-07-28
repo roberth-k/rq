@@ -44,6 +44,12 @@ type Response struct {
 	Unmarshaller Unmarshaller
 }
 
-func Begin(segments ...string) Request {
-	return Request{}.JoinURL(segments...)
+// Begin creates an otherwise empty rq.Request with the given base URL.
+func Begin(url string) Request {
+	return Request{}.SetURL(url)
+}
+
+// SetURL is an alias for Begin().
+func SetURL(url string) Request {
+	return Begin(url)
 }

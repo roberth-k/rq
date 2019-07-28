@@ -14,7 +14,7 @@ type HTTPBinResponse struct {
 }
 
 func HTTPBin() rq.Request {
-	return rq.Begin().SetURL(HTTPBinURL())
+	return rq.Begin(HTTPBinURL())
 }
 
 func HTTPBinURL() string {
