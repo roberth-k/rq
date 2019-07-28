@@ -47,3 +47,50 @@ func (req Request) JoinURL(segments ...string) Request {
 func (req Request) JoinFormatURL(segment string, args ...interface{}) Request {
 	return req.JoinURL(fmt.Sprintf(segment, args...))
 }
+
+func (req Request) AddQuery(name string, value string, args ...interface{}) Request {
+	if len(args) > 0 {
+		value = fmt.Sprintf(value, args...)
+	}
+
+	query := req.URL.Query()
+	query.Add(name, value)
+	req.URL.RawQuery = query.Encode()
+	return req
+}
+
+func (req Request) GetQuery(name string) string {
+	return req.URL.Query().Get(name)
+}
+
+func (req Request) RemoveQuery(name string) Request {
+	query := req.URL.Query()
+	query.Del(name)
+	req.URL.RawQuery = query.Encode()
+	return req
+}
+
+func (req Request) SetQuery(name string, value string, args ...interface{}) Request {
+	if len(args) > 0 {
+		value = fmt.Sprintf(value, args...)
+	}
+
+	query := req.URL.Query()
+	query.Set(name, value)
+	req.URL.RawQuery = query.Encode()
+	return req
+}
+
+func (req Request) ReplaceQuery(query url.Values) Request {
+	req.URL.RawQuery = query.Encode()
+	return req
+}
+
+func (req Request) GetFragment() string {
+	return req.URL.Fragment
+}
+
+func (req Request) SetFragment(fragment string) Request {
+	req.URL.Fragment = fragment
+	return req
+}
