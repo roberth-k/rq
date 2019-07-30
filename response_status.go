@@ -1,7 +1,7 @@
 package rq
 
 func (resp Response) Status() int {
-	return resp.response.StatusCode
+	return resp.Underlying.StatusCode
 }
 
 func (resp Response) Is1xx() bool {

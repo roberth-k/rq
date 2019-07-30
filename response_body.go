@@ -5,12 +5,12 @@ import (
 )
 
 func (resp Response) Close() error {
-	return resp.response.Body.Close()
+	return resp.Underlying.Body.Close()
 }
 
 func (resp Response) ReadAll() ([]byte, error) {
 	defer resp.Close()
-	return ioutil.ReadAll(resp.response.Body)
+	return ioutil.ReadAll(resp.Underlying.Body)
 }
 
 func (resp Response) ReadString() (string, error) {

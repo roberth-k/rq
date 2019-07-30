@@ -41,7 +41,7 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 	}
 
 	result := Response{
-		response:     response,
+		Underlying:   response,
 		Unmarshaller: req.Unmarshaller,
 	}
 
