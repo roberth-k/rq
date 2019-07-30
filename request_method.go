@@ -4,6 +4,11 @@ import (
 	"context"
 )
 
+func (req Request) SetMethod(method string) Request {
+	req.Method = method
+	return req
+}
+
 func (req Request) DELETE(ctx context.Context) (Response, error) {
 	req.Method = "DELETE"
 	return req.Do(ctx)

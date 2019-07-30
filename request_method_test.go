@@ -8,6 +8,14 @@ import (
 	"testing"
 )
 
+func TestRequest_SetMethod(t *testing.T) {
+	t.Parallel()
+	req := rq.Request{}
+	require.Equal(t, "", req.Method)
+	req = req.SetMethod("test")
+	require.Equal(t, "test", req.Method)
+}
+
 func TestBasicHTTPMethods(t *testing.T) {
 	t.Parallel()
 
