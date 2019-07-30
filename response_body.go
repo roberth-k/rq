@@ -36,5 +36,9 @@ func (resp Response) UnmarshalJSON(v interface{}) error {
 }
 
 func (resp Response) Unmarshal(v interface{}) error {
-	return resp.getUnmarshallerOrDefault()(resp, v)
+	if resp.Unmarshaller == nil {
+		return resp.UnmarshalJSON(v)
+	}
+
+	return resp.Unmarshaller(resp, v)
 }
