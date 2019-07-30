@@ -8,6 +8,51 @@ import (
 	"testing"
 )
 
+func TestRequest_Map(t *testing.T) {
+	t.Parallel()
+	req := rq.Request{}
+	require.Equal(t, "", req.Method)
+	req = req.Map(func(req rq.Request) rq.Request {
+		req.Method = "test"
+		return req
+	})
+	require.Equal(t, "test", req.Method)
+}
+
+func TestRequest_SetUnmarshaller(t *testing.T) {
+	t.Parallel()
+	req := rq.Request{}
+	require.Nil(t, req.Unmarshaller)
+	req = req.SetUnmarshaller(rq.UnmarshalJSON)
+	require.NotNil(t, req.Unmarshaller)
+}
+
+func TestRequest_SetAndGetAndHasError(t *testing.T) {
+	t.Parallel()
+	req := rq.Request{}
+	require.Nil(t, req.GetError())
+	require.False(t, req.HasError())
+	err := errors.New("test")
+	req = req.SetError(err)
+	require.Equal(t, err, req.GetError())
+	require.True(t, req.HasError())
+}
+
+func TestRequest_GetContext(t *testing.T) {
+	t.Parallel()
+	req := rq.Request{}
+	require.NotNil(t, req.GetContext())
+	var ctx context.Context
+	middleware := func(req rq.Request) rq.Request {
+		ctx = req.GetContext()
+		return req.SetError(errors.New("oops"))
+	}
+	req = req.AddRequestMiddlewares(middleware)
+	_, err := req.Do(context.TODO())
+	require.Error(t, err)
+	require.NotNil(t, ctx)
+}
+
 func TestRequest_Do(t *testing.T) {
 	t.Parallel()
 	//emptyRequest := rq.Request{}
