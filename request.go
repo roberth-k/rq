@@ -35,9 +35,10 @@ func (req Request) GetContext() context.Context {
 	return req.ctx
 }
 
-func (req Request) Do(ctx context.Context) (Response, error) {
+// Prepare builds the native http.Request that will be used for the HTTP request.
+func (req Request) Prepare(ctx context.Context) (*http.Request, error) {
 	if req.err != nil {
-		return Response{}, req.err
+		return nil, req.err
 	}
 
 	req.ctx = ctx
@@ -45,13 +46,13 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 	for _, middleware := range req.RequestMiddlewares {
 		req = middleware(req)
 		if req.err != nil {
-			return Response{}, req.err
+			return nil, req.err
 		}
 	}
 
 	r, err := http.NewRequest(req.Method, req.URL.String(), req.Body)
 	if err != nil {
-		return Response{}, err
+		return nil, err
 	}
 
 	for _, header := range req.Headers {
@@ -59,6 +60,15 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 	}
 
 	r = r.WithContext(req.GetContext())
+
+	return r, nil
+}
+
+func (req Request) Do(ctx context.Context) (Response, error) {
+	r, err := req.Prepare(ctx)
+	if err != nil {
+		return Response{}, err
+	}
 
 	client := req.Client
 	if client == nil {
