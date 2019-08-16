@@ -6,7 +6,7 @@ orbs:
 jobs:
   go111:
     docker:
-      - image: circleci/golang:1.11.12
+      - image: circleci/golang:1.11.13
         environment:
           HTTPBIN_URL: http://httpbin.org
       - image: kennethreitz/httpbin
@@ -26,7 +26,7 @@ jobs:
 
   go112:
     docker:
-      - image: circleci/golang:1.12.7
+      - image: circleci/golang:1.12.9
         environment:
           HTTPBIN_URL: http://httpbin.org
       - image: kennethreitz/httpbin
