@@ -11,7 +11,7 @@ func TestRequest_SetClient(t *testing.T) {
 	t.Parallel()
 	var client http.Client
 	req := rq.Begin("")
-	require.Equal(t, req.Client, http.DefaultClient)
+	require.Nil(t, req.Client)
 	req = req.SetClient(&client)
 	require.Equal(t, req.Client, &client)
 }
