@@ -35,6 +35,10 @@ func (resp Response) UnmarshalJSON(v interface{}) error {
 	return UnmarshalJSON(resp, v)
 }
 
+func (resp Response) UnmarshalXML(v interface{}) error {
+	return UnmarshalXML(resp, v)
+}
+
 func (resp Response) Unmarshal(v interface{}) error {
 	if resp.Unmarshaller == nil {
 		return resp.UnmarshalJSON(v)
