@@ -29,7 +29,7 @@ func (req Request) SetURL(value string) Request {
 	return req
 }
 
-func (req Request) JoinURL(segments ...string) Request {
+func (req Request) Path(segments ...string) Request {
 	return req.MapURL(func(url url.URL) url.URL {
 		for _, segment := range segments {
 			u, err := url.Parse(segment)
@@ -44,8 +44,8 @@ func (req Request) JoinURL(segments ...string) Request {
 	})
 }
 
-func (req Request) JoinFormatURL(segment string, args ...interface{}) Request {
-	return req.JoinURL(fmt.Sprintf(segment, args...))
+func (req Request) Pathf(segment string, args ...interface{}) Request {
+	return req.Path(fmt.Sprintf(segment, args...))
 }
 
 func (req Request) AddQuery(name string, value string, args ...interface{}) Request {
