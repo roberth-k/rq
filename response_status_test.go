@@ -30,7 +30,7 @@ func TestResponseStatusMethods(t *testing.T) {
 		code := code
 		t.Run(fmt.Sprintf("%d", code), func(t *testing.T) {
 			t.Parallel()
-			req := HTTPBin().JoinFormatURL("status/%d", code)
+			req := HTTPBin().Pathf("status/%d", code)
 			rep, err := req.GET(context.TODO())
 			require.NoError(t, err)
 

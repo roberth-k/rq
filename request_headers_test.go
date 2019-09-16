@@ -13,7 +13,7 @@ func TestRequestHeaders(t *testing.T) {
 	t.Parallel()
 
 	ctx := context.Background()
-	req := HTTPBin().JoinURL("/anything").SetHeader("Foo", "Bar").SetHeader("Bax", "Baz")
+	req := HTTPBin().Path("/anything").SetHeader("Foo", "Bar").SetHeader("Bax", "Baz")
 	require.Equal(t, http.Header{"Foo": []string{"Bar"}, "Bax": []string{"Baz"}}, req.HeaderMap())
 	rep, err := req.GET(ctx)
 	require.NoError(t, err)
@@ -128,7 +128,7 @@ func TestRequest_SetBasicAuth(t *testing.T) {
 	req := HTTPBin().SetBasicAuth("johndoe", "password123")
 	require.Equal(t, "Basic am9obmRvZTpwYXNzd29yZDEyMw==", req.GetHeader("authorization"))
 
-	rep, _ := req.JoinURL("basic-auth/johndoe/password123").GET(context.TODO())
+	rep, _ := req.Path("basic-auth/johndoe/password123").GET(context.TODO())
 	require.Equal(t, 200, rep.Status())
 	var response HTTPBinResponse
 	require.NoError(t, rep.UnmarshalJSON(&response))
@@ -140,7 +140,7 @@ func TestRequest_SetBearerToken(t *testing.T) {
 	req := HTTPBin().SetBearerToken("mytoken")
 	require.Equal(t, "Bearer mytoken", req.GetHeader("authorization"))
 
-	rep, _ := req.JoinURL("bearer").GET(context.TODO())
+	rep, _ := req.Path("bearer").GET(context.TODO())
 	require.Equal(t, 200, rep.Status())
 	var response HTTPBinResponse
 	require.NoError(t, rep.UnmarshalJSON(&response))

@@ -54,7 +54,7 @@ func NewResponseVerifyingMiddleware() rq.ResponseMiddleware {
 func Example_signingMiddleware() {
 	api := rq.
 		Begin("http://httpbin.org").
-		JoinURL("anything").
+		Path("anything").
 		AddRequestMiddlewares(NewRequestSigningMiddleware("much secure"))
 
 	var response HTTPBinResponse

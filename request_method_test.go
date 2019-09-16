@@ -37,7 +37,7 @@ func TestBasicHTTPMethods(t *testing.T) {
 			t.Parallel()
 
 			lcmethod := strings.ToLower(test.method)
-			req := HTTPBin().JoinURL(lcmethod)
+			req := HTTPBin().Path(lcmethod)
 			// todo: separate test of url joins
 			//require.Equal(t, "http://httpbin.org/"+lcmethod, req.URL.String())
 			rep, err := test.function(req, context.TODO())

@@ -2,7 +2,7 @@ package rq_test
 
 import (
 	"context"
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/stretchr/testify/require"
 	"github.com/tetratom/rq"
 	"testing"

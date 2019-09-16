@@ -3,7 +3,7 @@ package rq
 import (
 	"encoding/json"
 	"encoding/xml"
-	"github.com/pkg/errors"
+	"errors"
 	"strings"
 )
 
