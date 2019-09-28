@@ -21,8 +21,10 @@ func UnmarshalJSON(response Response, value interface{}) error {
 }
 
 func UnmarshalXML(response Response, value interface{}) error {
-	if !strings.HasPrefix(response.GetHeader("Content-Type"), "text/xml") {
-		return errors.New("expected content-type: text/xml")
+	if !strings.HasPrefix(response.GetHeader("Content-Type"), "text/xml") &&
+		!strings.HasPrefix(response.GetHeader("Content-Type"), "application/xml") {
+
+		return errors.New("expected content-type: text/xml or application/xml")
 	}
 
 	data, err := response.ReadAll()
