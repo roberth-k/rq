@@ -11,9 +11,9 @@ func TestRequest_AddQuery(t *testing.T) {
 	t.Parallel()
 	req := rq.Request{}
 	require.Equal(t, "", req.URL.RawQuery)
-	req = req.AddQuery("test1", "x%d", 1)
+	req = req.AddQueryf("test1", "x%d", 1)
 	require.Equal(t, "test1=x1", req.URL.RawQuery)
-	req = req.AddQuery("test2", "b")
+	req = req.AddQueryf("test2", "b")
 	require.Equal(t, "test1=x1&test2=b", req.URL.RawQuery)
 }
 
@@ -37,8 +37,8 @@ func TestRequest_SetQuery(t *testing.T) {
 	t.Parallel()
 	req := rq.Request{}
 	req.URL.RawQuery = "test1=a&test2=b&test1=c"
-	require.Equal(t, "test1=d&test2=b", req.SetQuery("test1", "%s", "d").URL.RawQuery)
-	require.Equal(t, "test1=a&test1=c&test2=d", req.SetQuery("test2", "d").URL.RawQuery)
+	require.Equal(t, "test1=d&test2=b", req.SetQueryf("test1", "%s", "d").URL.RawQuery)
+	require.Equal(t, "test1=a&test1=c&test2=d", req.SetQueryf("test2", "d").URL.RawQuery)
 }
 
 func TestRequest_ReplaceQuery(t *testing.T) {

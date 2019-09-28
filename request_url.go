@@ -48,7 +48,7 @@ func (req Request) Pathf(segment string, args ...interface{}) Request {
 	return req.Path(fmt.Sprintf(segment, args...))
 }
 
-func (req Request) AddQuery(name string, value string, args ...interface{}) Request {
+func (req Request) AddQueryf(name string, value string, args ...interface{}) Request {
 	if len(args) > 0 {
 		value = fmt.Sprintf(value, args...)
 	}
@@ -70,7 +70,7 @@ func (req Request) RemoveQuery(name string) Request {
 	return req
 }
 
-func (req Request) SetQuery(name string, value string, args ...interface{}) Request {
+func (req Request) SetQueryf(name string, value string, args ...interface{}) Request {
 	if len(args) > 0 {
 		value = fmt.Sprintf(value, args...)
 	}
