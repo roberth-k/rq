@@ -46,3 +46,8 @@ func (resp Response) Unmarshal(v interface{}) error {
 
 	return resp.Unmarshaller(resp, v)
 }
+
+func (resp Response) IgnoringContentType() Response {
+	resp.IgnoreContentType = true
+	return resp
+}

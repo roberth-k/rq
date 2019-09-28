@@ -42,8 +42,9 @@ type ResponseMiddleware func(Request, Response, error) (Response, error)
 type Unmarshaller func(Response, interface{}) error
 
 type Response struct {
-	Underlying   *http.Response
-	Unmarshaller Unmarshaller
+	Underlying        *http.Response
+	Unmarshaller      Unmarshaller
+	IgnoreContentType bool
 }
 
 // Begin creates an otherwise empty rq.Request with the given base URL.
