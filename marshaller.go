@@ -2,6 +2,7 @@ package rq
 
 import (
 	"encoding/json"
+	"net/url"
 )
 
 func NOOPMarshaller(req Request, _ interface{}) Request {
@@ -17,4 +18,11 @@ func JSONMarshaller(req Request, value interface{}) Request {
 	return req.
 		SetBodyBytes(data).
 		SetHeader("Content-Type", "application/json; charset=utf-8")
+}
+
+func FormMarshaller(req Request, value interface{}) Request {
+	data := value.(url.Values)
+	return req.
+		SetBodyString(data.Encode()).
+		SetHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 }

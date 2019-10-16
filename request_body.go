@@ -3,6 +3,7 @@ package rq
 import (
 	"bytes"
 	"io"
+	"net/url"
 	"strings"
 )
 
@@ -41,5 +42,10 @@ func (req Request) Marshal(value interface{}) Request {
 // The Content-Type of the request will be set to "application/json; charset=utf-8".
 func (req Request) MarshalJSON(value interface{}) Request {
 	req.Marshaller = JSONMarshaller
+	return req.Marshal(value)
+}
+
+func (req Request) MarshalForm(value url.Values) Request {
+	req.Marshaller = FormMarshaller
 	return req.Marshal(value)
 }

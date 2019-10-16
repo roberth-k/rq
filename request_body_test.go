@@ -6,6 +6,7 @@ import (
 	"github.com/tetratom/rq"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 )
@@ -95,6 +96,18 @@ func TestRequest_MarshalJSON(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, `{"x":"y"}`, string(data))
 	require.Equal(t, "application/json; charset=utf-8", req.GetHeader("Content-Type"))
+}
+
+func TestRequest_MarshalForm(t *testing.T) {
+	t.Parallel()
+
+	actual := url.Values{"x": []string{"y", "z"}}
+	req := rq.Request{}.MarshalForm(actual)
+	require.NotNil(t, req.Body)
+	data, err := ioutil.ReadAll(req.Body)
+	require.NoError(t, err)
+	require.Equal(t, "x=y&x=z", string(data))
+	require.Equal(t, "application/x-www-form-urlencoded; charset=utf-8", req.GetHeader("Content-Type"))
 }
 
 func TestBasicMarshalling(t *testing.T) {
