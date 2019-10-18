@@ -13,7 +13,14 @@
 
 _rq is a no-nonsense library for working with rest apis_
 
-# Example
+# highlights
+
+- request constructors pass values: one `rq.Request` can be used as the basis of another without copy concerns
+- easy access to common operations: `Path()`, `Queryf()`, `SetHeader()`, `Is2xx()`, and many more
+- support for arbitrary request, response middleware, and marshallers
+- context-first
+
+# example
 
 ```go
 import "github.com/tetratom/rq"
