@@ -11,4 +11,25 @@
   </a>
 </p>
 
-_rq is a wrapper for go's http client._
+_rq is a no-nonsense library for working with rest apis_
+
+# Example
+
+```go
+import "github.com/tetratom/rq"
+
+req := rq.
+    Begin("https://httpbin.org").
+    Path("get").
+    Queryf("x", "y%d", 1)
+
+rep, err := req.GET(context.Background())
+switch {
+case err != nil:
+    panic(err)
+case !rep.Is2xx():
+    panic("bad response!")
+}
+
+log.Printf("response: %s", rep.ReadStringOrPanic())
+```
