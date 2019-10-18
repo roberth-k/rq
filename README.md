@@ -10,8 +10,7 @@
     <img src="https://img.shields.io/codecov/c/github/tetratom/rq/master" alt="Codecov">
   </a>
 </p>
-
-_rq is a no-nonsense library for working with rest apis_
+<p align="center">rq is a no-nonsense library for working with rest apis</p>
 
 # highlights
 
