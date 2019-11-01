@@ -37,7 +37,7 @@ func (req Request) SetError(err error) Request {
 // middlewares.
 func (req Request) GetContext() context.Context {
 	if req.ctx == nil {
-		return context.TODO()
+		return context.Background()
 	}
 
 	return req.ctx
@@ -95,8 +95,6 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 			err = ctx.Err()
 		default:
 		}
-
-		return Response{}, err
 	}
 
 	result := Response{
