@@ -36,7 +36,14 @@ type Request struct {
 	ctx                 context.Context
 }
 
-type ResponseMiddleware func(Request, Response, error) (Response, error)
+// ResponseMiddleware intercepts a response. It is also called in case of a
+// request failure, in which case `rep` may be empty, and `err` non-nil. The
+// middleware is expected to return (rep, err) immediately if it is not designed
+// to handle an erroneous response.
+//
+// The `req` passed to the middleware is exactly the same as was used for the
+// original request. Use req.GetContext() to obtain the request context.
+type ResponseMiddleware func(req Request, rep Response, err error) (Response, error)
 
 type Unmarshaller func(Response, interface{}) error
 
