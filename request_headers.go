@@ -8,6 +8,9 @@ import (
 	"strings"
 )
 
+// HeaderMap returns a copy of the headers assigned to this request.
+//
+// Modifying the map will affect the request.
 func (req Request) HeaderMap() http.Header {
 	m := make(map[string][]string, len(req.Headers))
 	for _, header := range req.Headers {

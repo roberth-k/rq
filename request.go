@@ -23,11 +23,18 @@ func (req Request) HasError() bool {
 	return req.err != nil
 }
 
+// SetError is used to taint a Request. Builder methods can continue to change
+// the request, but executing the request will fail with the given error immediately.
+//
+// The request can be un-tainted with SetError(nil).
 func (req Request) SetError(err error) Request {
 	req.err = err
 	return req
 }
 
+// GetContext returns the context currently associated with the request. The
+// context is set as part of an execution method, so this is only useful in
+// middlewares.
 func (req Request) GetContext() context.Context {
 	if req.ctx == nil {
 		return context.TODO()
