@@ -89,3 +89,7 @@ func (req Request) SetBasicAuth(username, password string) Request {
 func (req Request) SetBearerToken(token string) Request {
 	return req.SetHeader("Authorization", "Bearer %s", token)
 }
+
+func (req Request) SetApiKey(key string) Request {
+	return req.SetHeader("X-API-Key", key)
+}
