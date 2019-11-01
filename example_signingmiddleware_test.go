@@ -22,7 +22,7 @@ func NewRequestSigningMiddleware(secret string) rq.RequestMiddleware {
 		io.WriteString(digest, secret)
 
 		if req.Body != nil {
-			data, _ := ioutil.ReadAll(req.Body)
+			data, _ := ioutil.ReadAll(req.Body.Reader())
 			digest.Write(data)
 			req = req.SetBodyBytes(data)
 		}

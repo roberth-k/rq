@@ -3,7 +3,6 @@ package rq
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"net/url"
 )
@@ -28,7 +27,7 @@ type Request struct {
 	Method              string
 	Headers             []Header
 	Client              *http.Client
-	Body                io.Reader
+	Body                RequestBody
 	RequestMiddlewares  []RequestMiddleware
 	ResponseMiddlewares []ResponseMiddleware
 	Marshaller          Marshaller

@@ -2,6 +2,7 @@ package rq
 
 import (
 	"context"
+	"io"
 	"net/http"
 )
 
@@ -50,7 +51,12 @@ func (req Request) Prepare(ctx context.Context) (*http.Request, error) {
 		}
 	}
 
-	r, err := http.NewRequest(req.Method, req.URL.String(), req.Body)
+	var reader io.Reader
+	if req.Body != nil {
+		reader = req.Body.Reader()
+	}
+
+	r, err := http.NewRequest(req.Method, req.URL.String(), reader)
 	if err != nil {
 		return nil, err
 	}

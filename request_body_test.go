@@ -30,8 +30,8 @@ func TestRequest_SetBody(t *testing.T) {
 	req := rq.Request{}
 	require.Nil(t, req.Body)
 	r := strings.NewReader("test")
-	req = req.SetBody(r)
-	require.Equal(t, r, req.Body)
+	req = req.SetBodyReader(r)
+	require.Equal(t, r, req.Body.Reader())
 }
 
 func TestRequest_SetBodyBytes(t *testing.T) {
@@ -41,7 +41,7 @@ func TestRequest_SetBodyBytes(t *testing.T) {
 	expect := []byte("test")
 	req = req.SetBodyBytes(expect)
 	require.NotNil(t, req.Body)
-	actual, err := ioutil.ReadAll(req.Body)
+	actual, err := ioutil.ReadAll(req.Body.Reader())
 	require.NoError(t, err)
 	require.Equal(t, expect, actual)
 }
@@ -53,7 +53,7 @@ func TestRequest_SetBodyString(t *testing.T) {
 	expect := "test"
 	req = req.SetBodyString(expect)
 	require.NotNil(t, req.Body)
-	actual, err := ioutil.ReadAll(req.Body)
+	actual, err := ioutil.ReadAll(req.Body.Reader())
 	require.NoError(t, err)
 	require.Equal(t, expect, string(actual))
 }
@@ -92,7 +92,7 @@ func TestRequest_MarshalJSON(t *testing.T) {
 	actual := map[string]string{"x": "y"}
 	req := rq.Request{}.MarshalJSON(actual)
 	require.NotNil(t, req.Body)
-	data, err := ioutil.ReadAll(req.Body)
+	data, err := ioutil.ReadAll(req.Body.Reader())
 	require.NoError(t, err)
 	require.Equal(t, `{"x":"y"}`, string(data))
 	require.Equal(t, "application/json; charset=utf-8", req.GetHeader("Content-Type"))
@@ -104,7 +104,7 @@ func TestRequest_MarshalForm(t *testing.T) {
 	actual := url.Values{"x": []string{"y", "z"}}
 	req := rq.Request{}.MarshalForm(actual)
 	require.NotNil(t, req.Body)
-	data, err := ioutil.ReadAll(req.Body)
+	data, err := ioutil.ReadAll(req.Body.Reader())
 	require.NoError(t, err)
 	require.Equal(t, "x=y&x=z", string(data))
 	require.Equal(t, "application/x-www-form-urlencoded; charset=utf-8", req.GetHeader("Content-Type"))
