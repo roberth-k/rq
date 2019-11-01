@@ -83,6 +83,12 @@ func (req Request) Do(ctx context.Context) (Response, error) {
 
 	response, err := client.Do(r)
 	if err != nil {
+		select {
+		case <-ctx.Done():
+			err = ctx.Err()
+		default:
+		}
+
 		return Response{}, err
 	}
 
