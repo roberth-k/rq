@@ -43,8 +43,9 @@ func (req Request) GetContext() context.Context {
 	return req.ctx
 }
 
-// prepare builds the native http.Request that will be used for the HTTP request.
-func (req Request) prepare(ctx context.Context) (*http.Request, error) {
+// Prepare builds the native http.Request that will be used for the HTTP request.
+// It returns a new instance of request
+func (req Request) Prepare(ctx context.Context) (*http.Request, error) {
 	if req.err != nil {
 		return nil, req.err
 	}
@@ -78,7 +79,7 @@ func (req Request) prepare(ctx context.Context) (*http.Request, error) {
 }
 
 func (req Request) Do(ctx context.Context) (Response, error) {
-	r, err := req.prepare(ctx)
+	r, err := req.Prepare(ctx)
 	if err != nil {
 		return Response{}, err
 	}
