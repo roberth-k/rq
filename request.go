@@ -64,7 +64,7 @@ func (req Request) Prepare(ctx context.Context) (*http.Request, error) {
 		reader = req.Body.Reader()
 	}
 
-	r, err := http.NewRequest(req.Method, req.URL.String(), reader)
+	r, err := newHttpRequest(&req, reader)
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +72,6 @@ func (req Request) Prepare(ctx context.Context) (*http.Request, error) {
 	for _, header := range req.Headers {
 		r.Header.Add(header.Name, header.Value)
 	}
-
-	r = r.WithContext(req.GetContext())
 
 	return r, nil
 }
