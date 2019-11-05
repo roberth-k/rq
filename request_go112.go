@@ -3,6 +3,7 @@
 package rq
 
 import (
+	"io"
 	"net/http"
 )
 
