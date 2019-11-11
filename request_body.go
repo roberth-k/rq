@@ -83,6 +83,13 @@ func (req Request) MarshalJSON(value interface{}) Request {
 	return req.Marshal(value)
 }
 
+// MarshalXML marshals the given value using the default XML marshaller.
+// The Content-Type of the request will be set to "text/xml; charset=utf-8".
+func (req Request) MarshalXML(value interface{}) Request {
+	req.Marshaller = XMLMarshaller
+	return req.Marshal(value)
+}
+
 func (req Request) MarshalForm(value url.Values) Request {
 	req.Marshaller = FormMarshaller
 	return req.Marshal(value)
