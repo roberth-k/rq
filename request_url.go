@@ -3,6 +3,7 @@ package rq
 import (
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 func (req Request) MapURL(f func(url url.URL) url.URL) Request {
@@ -31,15 +32,14 @@ func (req Request) SetURL(value string) Request {
 
 func (req Request) Path(segments ...string) Request {
 	return req.MapURL(func(url url.URL) url.URL {
-		for _, segment := range segments {
-			u, err := url.Parse(segment)
-			if err != nil {
-				req.err = err
-				return url
-			}
+		s := strings.Join(segments, "/")
 
-			url = *u
+		if strings.HasPrefix(s, "/") {
+			url.Path = s
+		} else {
+			url.Path += "/" + s
 		}
+
 		return url
 	})
 }
