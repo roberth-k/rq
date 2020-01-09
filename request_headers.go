@@ -101,3 +101,7 @@ func (req Request) SetBearerToken(token string) Request {
 func (req Request) SetApiKey(key string) Request {
 	return req.SetHeader("X-API-Key", key)
 }
+
+func (req Request) SetUserAgent(ua string) Request {
+	return req.SetHeader("User-Agent", ua)
+}
