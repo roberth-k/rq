@@ -4,6 +4,17 @@ func (resp Response) Status() int {
 	return resp.Underlying.StatusCode
 }
 
+func (resp Response) StatusOneOf(statuses ...int) bool {
+	status := resp.Status()
+	for _, s := range statuses {
+		if s == status {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (resp Response) Is1xx() bool {
 	status := resp.Status()
 	return status >= 100 && status < 200
