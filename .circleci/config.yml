@@ -7,6 +7,7 @@ workflows:
   version: 2
   default:
     jobs:
+      - go114
       - go113
       - go112
       - go111
@@ -19,7 +20,6 @@ jobs:
           HTTPBIN_URL: http://httpbin.org
       - image: kennethreitz/httpbin
         name: httpbin.org
-
     steps:
       - checkout
       - restore_cache:
@@ -39,7 +39,6 @@ jobs:
           HTTPBIN_URL: http://httpbin.org
       - image: kennethreitz/httpbin
         name: httpbin.org
-
     steps:
       - checkout
       - restore_cache:
@@ -58,7 +57,27 @@ jobs:
           HTTPBIN_URL: http://httpbin.org
       - image: kennethreitz/httpbin
         name: httpbin.org
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
+      - run: go mod download
+      - save_cache:
+          key: '{{ .Environment.CIRCLE_JOB }}-{{ checksum "go.sum" }}'
+          paths:
+            - "/go/pkg/mod"
+      - run: go test ./... -coverprofile=/tmp/coverprofile -covermode=atomic
+      - codecov/upload:
+          file: /tmp/coverprofile
 
+  go114:
+    docker:
+      - image: circleci/golang:1.14
+        environment:
+          HTTPBIN_URL: http://httpbin.org
+      - image: kennethreitz/httpbin
+        name: httpbin.org
     steps:
       - checkout
       - restore_cache:
