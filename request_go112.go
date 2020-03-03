@@ -8,11 +8,11 @@ import (
 )
 
 func newHttpRequest(req *Request, r io.Reader) (*http.Request, error) {
-	r, err := http.NewRequest(req.Method, req.URL.String(), r)
+	req, err := http.NewRequest(req.Method, req.URL.String(), r)
 	if err != nil {
 		return nil, err
 	}
 
-	r = r.WithContext(req.GetContext())
-	return r, nil
+	req = req.WithContext(req.GetContext())
+	return req, nil
 }
